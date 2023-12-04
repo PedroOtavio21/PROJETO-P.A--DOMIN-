@@ -119,7 +119,7 @@ void printaTurno(Jogador *jogador, EstadoJogo *estado){
     printf("\n\nPeças disponíveis para compra: %d", estado->pecasDisponiveis);
 }
 
-void escolhaJogador(Jogador *jogador, EstadoJogo *estado){
+void escolhaOpcao(Jogador *jogador, EstadoJogo *estado){
     int opcao;
     printf("Opções disponíveis:\n");
     printf("1. Jogar Peça\n2. Comprar Peça\n3.Passar Vez");
@@ -143,5 +143,25 @@ void escolhaJogador(Jogador *jogador, EstadoJogo *estado){
 }
 
 void jogarPeça(Jogador *jogador, EstadoJogo *estado){
-    
+    int escolha;
+    int indicePeca;
+
+    printf("Peças disponíveis para a jogada:\n");
+    printaTurno(jogador, estado); // Chamada da função criada anteriormente para exibir dados na tela.
+    printf("Escolha a peça a ser jogada: (0-%d)", jogador->qntPecas - 1); // indice varia de 0 - numero de pecas
+    scanf("%d", &indicePeca);
+
+    if(indicePeca < 0 || indicePeca >= jogador->qntPecas){
+        printf("Indice inserido foi invalido");
+        return; // Preciso fazer uma manutenção do código para que ele mostre novamente para o usuario
+    }
+
+    printf("Insira o lado no qual queira jogar(0 - esquerda e 1 - direita): ");
+    scanf("%d", &escolha);
+
+    if(escolha != 0 && escolha != 1){
+        printf("O lado escolhido foi invalido.");
+        return; // Preciso fazer uma manutenção do código para que ele mostre novamente para o usuario
+    }
+
 }

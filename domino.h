@@ -29,7 +29,7 @@ void imprimirJogo();
 
 Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2);
 void printaTurno(Jogador *jogador, EstadoJogo *estado);
-void escolhaJogador(Jogador *jogador, EstadoJogo *estado);
+void escolhaOpcao(Jogador *jogador, EstadoJogo *estado);
 
 void jogarPeça();
 void comprarPeça();
