@@ -1,6 +1,9 @@
 #ifndef DOMINO_H
 #define DOMINO_H
 
+#define MAX_PECAS 28
+#define NUM_PECAS 7
+// Criação de estruturas para a reutilização ao decorrer do trabalho
 typedef struct{
     int ladoEsquerdo;
     int ladoDireito;
@@ -8,19 +11,24 @@ typedef struct{
 
 typedef struct{
     char nomeJogador[50];
-    Peca maoJogador[7];
+    Peca maoJogador[NUM_PECAS];
     int qntPecas;
 } Jogador;
 
 typedef struct{
-    Peca pecasMesa[28];
+    Peca pecasMesa[MAX_PECAS];
     int qntPecasMesa;
     int jogadorDaVez;
 } EstadoJogo;
 
-void identificaJogadores();
-void criarPecas();
+void identificaJogadores(Jogador jogadores[], int numJogadores);
+void criacaoPecas();
 void distribuirPecas();
-int somaPecas();
-int primeiraJogada();
+void imprimirJogo();
+
+void jogadorInicial();
+
+void salvarJogo();
+void carregarJogo();
+
 #endif
