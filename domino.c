@@ -3,7 +3,7 @@
 #include <time.h>
 #include "domino.h"
 
-// Função para identificar os dois jogadores da partida.
+// --------Função para identificar os dois jogadores da partida.---------
 void identificaJogadores(Jogador jogadores[], int numJogadores){
     printf("Olá! Insira o nome dos jogadores participantes.\n");
     for(int i = 0; i < numJogadores; i++){
@@ -13,7 +13,7 @@ void identificaJogadores(Jogador jogadores[], int numJogadores){
     }
 }
 
-// Função para criação das 28 peças
+// --------------------Função para criação das 28 peças-----------------------
 void criacaoPecas(Peca pecas[]){
     int k = 0;
     for(int i = 0; i <= 6; i++){
@@ -25,6 +25,7 @@ void criacaoPecas(Peca pecas[]){
     }
 }
 
+// --------Função responsável por embaralhar as peças automaticamente---------
 void embaralharPecas(Peca pecas[]){
     int i, j;
     for(i = 0; i < MAX_PECAS; i++){
@@ -36,12 +37,17 @@ void embaralharPecas(Peca pecas[]){
     }
 }
 
+// -------------Distribuição das peças entre os jogadores.----------------
 void distribuicaoPecas(Peca pecas[], Jogador *jogador, int numPecas){
     for(int i = 0; i < numPecas; i++){
         jogador->maoJogador[i] = pecas[i];
     }
 }
 
+/* 
+Função Mais importante inicialmente, responsável por returnar uma struct contendo o jogador
+que irá iniciar a partida!
+*/ 
 Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2) {
     // inicialização de variaveis
     int maiorDupla1 = -1, maiorDupla2 = -1; 
@@ -95,3 +101,47 @@ Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2) {
     }
 }
 
+// Função responsável pelo turno da vez
+void printaTurno(Jogador *jogador, EstadoJogo *estado){
+    // Peças disponíveis na mão do jogador
+    printf("Mao do %s:\n", jogador->nomeJogador);
+    for(int i = 0; i < jogador->qntPecas; i++){
+        printf("[%d|%d] ", jogador->maoJogador[i].ladoEsquerdo, jogador->maoJogador[i].ladoDireito);
+    }
+    // Peças disponíveis dentro da mesa
+    printf("\n\nPeças disponíveis na mesa:\n");
+    for(int i = 0; i < estado->qntPecasMesa; i++){
+        printf("[%d|%d] ", estado->pecasMesa[i].ladoEsquerdo, estado->pecasMesa[i].ladoDireito);
+    }
+    // Peças disponíveis na mão do adversário
+    printf("\n\nQuantidade de peças disponíveis na mão do adversário: %d", 28 - (jogador->qntPecas + estado->qntPecasMesa));
+    // Peças disponíveis para uma possível compra
+    printf("\n\nPeças disponíveis para compra: %d", estado->pecasDisponiveis);
+}
+
+void escolhaJogador(Jogador *jogador, EstadoJogo *estado){
+    int opcao;
+    printf("Opções disponíveis:\n");
+    printf("1. Jogar Peça\n2. Comprar Peça\n3.Passar Vez");
+
+    printf("\nEscolha uma das opções acima.\n");
+    scanf("%d", &opcao);
+
+    switch(opcao){
+        case 1:
+            // jogarPeça;
+            break;
+        case 2:
+            // Comprar peça;
+            break;
+        case 3:
+            // Passar vez;
+            break;
+        default:
+            printf("Opção inserida é invalida!\n");
+    }
+}
+
+void jogarPeça(Jogador *jogador, EstadoJogo *estado){
+    
+}

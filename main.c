@@ -9,7 +9,7 @@ void menujogo(){
 
 int main(){
     printf("JOGO DE DOMINÓ");
-
+    menujogo();
 
     return 0;
 }

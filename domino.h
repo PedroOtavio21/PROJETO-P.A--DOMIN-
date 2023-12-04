@@ -14,13 +14,13 @@ typedef struct{
     Peca maoJogador[NUM_PECAS];
     int qntPecas;
 } Jogador;
-/*
+
 typedef struct{
     Peca pecasMesa[MAX_PECAS];
     int qntPecasMesa;
-    int jogadorDaVez;
+    int pecasDisponiveis;
 } EstadoJogo;
-*/
+
 
 void identificaJogadores(Jogador jogadores[], int numJogadores);
 void criacaoPecas(Peca pecas[]);
@@ -28,6 +28,12 @@ void distribuicaoPecas(Peca pecas[], Jogador *jogador, int numPecas);
 void imprimirJogo();
 
 Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2);
+void printaTurno(Jogador *jogador, EstadoJogo *estado);
+void escolhaJogador(Jogador *jogador, EstadoJogo *estado);
+
+void jogarPeça();
+void comprarPeça();
+void passarVez();
 
 void salvarJogo();
 void carregarJogo();
