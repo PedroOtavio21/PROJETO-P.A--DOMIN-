@@ -129,20 +129,20 @@ void escolhaOpcao(Jogador *jogador, EstadoJogo *estado){
 
     switch(opcao){
         case 1:
-            // jogarPeça;
+            jogarPeca(jogador, estado);
             break;
         case 2:
-            // Comprar peça;
+            comprarPeca(jogador, estado);
             break;
         case 3:
-            // Passar vez;
+            passarVez();
             break;
         default:
             printf("Opção inserida é invalida!\n");
     }
 }
 
-void jogarPeça(Jogador *jogador, EstadoJogo *estado){
+void jogarPeca(Jogador *jogador, EstadoJogo *estado){
     int escolha;
     int indicePeca;
 
@@ -164,4 +164,45 @@ void jogarPeça(Jogador *jogador, EstadoJogo *estado){
         return; // Preciso fazer uma manutenção do código para que ele mostre novamente para o usuario
     }
 
+    // Atualização da struct jogador com a ultima jogada;
+    jogador->ultimaJogada = jogador->maoJogador[indicePeca];
+    jogador->ladoPeca = escolha;
+
+    // Adicionar uma peça em um dos lados da mesa atual;
+    if(escolha == 0){
+        estado->pecasMesa[estado->qntPecasMesa++] = jogador->ultimaJogada;
+    } else {
+        estado->pecasMesa[estado->qntPecasMesa] = jogador->ultimaJogada;
+        estado->qntPecasMesa++;
+    }
+
+    // Removendo peca da mão do jogador
+    for(int i = indicePeca; i < jogador->qntPecas - 1; i++){
+        jogador->maoJogador[i] = jogador->maoJogador[i + 1];
+    }
+    jogador->qntPecas--;
+
+    estado->ultimaJogada = jogador->ultimaJogada;
+    estado->ladoPeca = jogador->ladoPeca;
+    estado->pecasDisponiveis--;
+}
+
+void comprarPeca(Jogador *jogador, EstadoJogo *estado){
+    if(estado->pecasDisponiveis > 0){
+        jogador->maoJogador[jogador->qntPecas++] = estado->pecasMesa[estado->pecasDisponiveis - 1];
+
+        estado->pecasDisponiveis--;
+        jogador->pecasCompradas;
+
+        printf("%s comprou uma nova peca!\n", jogador->nomeJogador);
+    } else {
+        printf("Nao ha pecas disponiveis para compra!");
+    }
+}
+
+void passarVez(Jogador *jogador, EstadoJogo *estado){
+    estado->jogadorDaVez = (estado->jogadorDaVez + 1) % estado->totalJogadores;
+    jogador->qntPassadasVez++;
+
+    printf("%s passou a vez!", jogador->nomeJogador);
 }
