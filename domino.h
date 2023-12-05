@@ -33,20 +33,6 @@ typedef struct{
 void identificaJogadores(Jogador jogadores[], int numJogadores);
 void criacaoPecas(Peca pecas[]);
 void distribuicaoPecas(Peca pecas[], Jogador *jogador, int numPecas);
-void imprimirJogo();
 
-// Turnos de jogadores
-Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2);
-void printaTurno(Jogador *jogador, EstadoJogo *estado);
-void escolhaOpcao(Jogador *jogador, EstadoJogo *estado);
-
-// 3 opções por jogador
-void jogarPeca();
-void comprarPeca();
-void passarVez();
-
-// Ponto final do jogo
-void salvarJogo();
-void carregarJogo();
 
 #endif
