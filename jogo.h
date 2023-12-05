@@ -13,7 +13,7 @@ void comprarPeca(Jogador *jogador, EstadoJogo *estado);
 void passarVez(Jogador *jogador, EstadoJogo *estado);
 
 // Ponto final do jogo
-void salvarJogo();
-void carregarJogo();
+void salvarJogo(EstadoJogo *estado, char *nomeArquivo);
+void carregarJogo(EstadoJogo *estado, char *nomeArquivo);
 
 #endif

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "jogo.h"
 
 /* 
@@ -57,7 +58,7 @@ Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2) {
     }
 }
 
-// Função responsável pelo turno da vez
+// Função responsável por printar na tela o jogador da vez e seus status
 void printaTurno(Jogador *jogador, EstadoJogo *estado){
     // Peças disponíveis na mão do jogador
     printf("Mao do %s:\n", jogador->nomeJogador);
@@ -75,6 +76,7 @@ void printaTurno(Jogador *jogador, EstadoJogo *estado){
     printf("\n\nPeças disponíveis para compra: %d", estado->pecasDisponiveis);
 }
 
+// Função com as 3 oções de jogadas por jogador
 void escolhaOpcao(Jogador *jogador, EstadoJogo *estado){
     int opcao;
     printf("Opções disponíveis:\n");
@@ -98,6 +100,7 @@ void escolhaOpcao(Jogador *jogador, EstadoJogo *estado){
     }
 }
 
+// Jogar peça escolhida
 void jogarPeca(Jogador *jogador, EstadoJogo *estado){
     int escolha;
     int indicePeca;
@@ -143,6 +146,7 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado){
     estado->pecasDisponiveis--;
 }
 
+// Comprar peça disponível do tabuleiro
 void comprarPeca(Jogador *jogador, EstadoJogo *estado){
     if(estado->pecasDisponiveis > 0){
         jogador->maoJogador[jogador->qntPecas++] = estado->pecasMesa[estado->pecasDisponiveis - 1];
@@ -156,9 +160,37 @@ void comprarPeca(Jogador *jogador, EstadoJogo *estado){
     }
 }
 
+// Passar a vez da jogada
 void passarVez(Jogador *jogador, EstadoJogo *estado){
     estado->jogadorDaVez = (estado->jogadorDaVez + 1) % estado->totalJogadores;
     jogador->qntPassadasVez++;
 
     printf("%s passou a vez!", jogador->nomeJogador);
 }
+
+void salvarJogo(EstadoJogo *estado, char *nomeArquivo){
+    FILE *file = fopen(nomeArquivo, "w"); // txt ou binario
+
+    if(file = NULL){
+        printf("O arquivo nao foi encontrado com sucesso.\n");
+        return;
+    }
+
+    fwrite(estado, sizeof(EstadoJogo), 1, file);
+
+    fclose(file);
+}
+
+void carregarJogo(EstadoJogo *estado, char *nomeArquivo){
+    FILE *file = fopen(nomeArquivo, "r"); // txt ou binario
+
+    if(file = NULL){
+        printf("Erro ao encontrar o arquivo inserido.\n");
+        return;
+    }
+
+    fread(estado, sizeof(EstadoJogo), 1, file);
+
+    fclose(file);
+}
+
