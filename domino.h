@@ -3,7 +3,7 @@
 
 #define MAX_PECAS 28
 #define NUM_PECAS 7
-// Criação de estruturas para a reutilização ao decorrer do trabalho
+// Arquivo contendo dados base para serem utilizados ao decorrer do código
 typedef struct{
     int ladoEsquerdo;
     int ladoDireito;
@@ -14,9 +14,9 @@ typedef struct{
     Peca maoJogador[NUM_PECAS];
     int qntPecas;
     Peca ultimaJogada;
-    int ladoPeca;
+    int ladoPeca; // lado no qual a peça sera jogada (esquerda ou direita)
     int pecasCompradas;
-    int qntPassadasVez;
+    int qntPassadasVez; // Quantidade de vezes passadas por jogador
 } Jogador;
 
 typedef struct{
