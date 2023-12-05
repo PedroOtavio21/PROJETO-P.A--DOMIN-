@@ -135,7 +135,7 @@ void escolhaOpcao(Jogador *jogador, EstadoJogo *estado){
             comprarPeca(jogador, estado);
             break;
         case 3:
-            passarVez();
+            passarVez(jogador, estado);
             break;
         default:
             printf("Opção inserida é invalida!\n");
