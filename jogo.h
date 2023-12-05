@@ -2,6 +2,7 @@
 #define JOGO_H
 #include "domino.h"
 
+
 // Turnos de jogadores
 Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2);
 void printaTurno(Jogador *jogador, EstadoJogo *estado);
@@ -15,5 +16,8 @@ void passarVez(Jogador *jogador, EstadoJogo *estado);
 // Ponto final do jogo
 void salvarJogo(EstadoJogo *estado, char *nomeArquivo);
 void carregarJogo(EstadoJogo *estado, char *nomeArquivo);
+int menuJogo();
+void iniciarJogo();
+bool condicaoFimJogo();
 
 #endif

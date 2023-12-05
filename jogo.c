@@ -1,19 +1,18 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #include "jogo.h"
 
-/* 
-Função Mais importante inicialmente, responsável por returnar uma struct contendo o jogador
-que irá iniciar a partida!
-*/ 
+// Função para determinar o jogador Inicial
 Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2) {
     // inicialização de variaveis
     int maiorDupla1 = -1, maiorDupla2 = -1; 
     int soma1 = 0, soma2 = 0;
-    
+
     for(int i = 0; i < jogador1->qntPecas; i++){
         // identificar a soma das peças de cada jogador
-        soma1 += jogador1->maoJogador[i].ladoEsquerdo + jogador1->maoJogador->ladoDireito;
-        soma2 += jogador2->maoJogador[i].ladoEsquerdo + jogador2->maoJogador->ladoDireito;
+        soma1 += jogador1->maoJogador[i].ladoEsquerdo + jogador1->maoJogador[i].ladoDireito;
+        soma2 += jogador2->maoJogador[i].ladoEsquerdo + jogador2->maoJogador[i].ladoDireito;
         // identificar se os jogadores possuem duplas / carrossel
         if(jogador1->maoJogador[i].ladoEsquerdo == jogador1->maoJogador[i].ladoDireito){
             maiorDupla1 = i;
@@ -22,7 +21,7 @@ Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2) {
             maiorDupla2 = i;
         }
     }
-    
+
     // Caso não tenha dupla, as duplas continuarão com -1.
     if(maiorDupla1 != -1 && maiorDupla2 != -1){
         if(jogador1->maoJogador[maiorDupla1].ladoEsquerdo > jogador2->maoJogador[maiorDupla2].ladoEsquerdo){
@@ -59,33 +58,34 @@ Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2) {
 }
 
 // Função responsável por printar na tela o jogador da vez e seus status
-void printaTurno(Jogador *jogador, EstadoJogo *estado){
+void printaTurno(Jogador *jogador, EstadoJogo *estado) {
     // Peças disponíveis na mão do jogador
     printf("Mao do %s:\n", jogador->nomeJogador);
-    for(int i = 0; i < jogador->qntPecas; i++){
+    for (int i = 0; i < jogador->qntPecas; i++) {
         printf("[%d|%d] ", jogador->maoJogador[i].ladoEsquerdo, jogador->maoJogador[i].ladoDireito);
     }
-    // Peças disponíveis dentro da mesa
-    printf("\n\nPeças disponíveis na mesa:\n");
-    for(int i = 0; i < estado->qntPecasMesa; i++){
+
+    // Peças disponíveis na mesa
+    printf("\n\nPecas disponiveis na mesa:\n");
+    for (int i = 0; i < estado->qntPecasMesa; i++) {
         printf("[%d|%d] ", estado->pecasMesa[i].ladoEsquerdo, estado->pecasMesa[i].ladoDireito);
     }
-    // Peças disponíveis na mão do adversário
-    printf("\n\nQuantidade de peças disponíveis na mão do adversário: %d", 28 - (jogador->qntPecas + estado->qntPecasMesa));
-    // Peças disponíveis para uma possível compra
-    printf("\n\nPeças disponíveis para compra: %d", estado->pecasDisponiveis);
+
+    // Informações adicionais
+    printf("\n\nInformacoes adicionais:\n");
+    printf("Pecas disponiveis na mao do adversario: %d\n", 28 - (jogador->qntPecas + estado->qntPecasMesa));
+    printf("Pecas disponiveis para compra: %d\n", estado->pecasDisponiveis);
 }
 
 // Função com as 3 oções de jogadas por jogador
-void escolhaOpcao(Jogador *jogador, EstadoJogo *estado){
+void escolhaOpcao(Jogador *jogador, EstadoJogo *estado) {
     int opcao;
-    printf("Opções disponíveis:\n");
-    printf("1. Jogar Peça\n2. Comprar Peça\n3.Passar Vez");
-
-    printf("\nEscolha uma das opções acima.\n");
+    printf("Opcoes disponiveis:\n");
+    printf("1. Jogar Peca\n2. Comprar Peca\n3. Passar Vez\n");  
+    printf("Escolha uma das opcoes acima.\n");
     scanf("%d", &opcao);
 
-    switch(opcao){
+    switch (opcao) {
         case 1:
             jogarPeca(jogador, estado);
             break;
@@ -96,7 +96,8 @@ void escolhaOpcao(Jogador *jogador, EstadoJogo *estado){
             passarVez(jogador, estado);
             break;
         default:
-            printf("Opção inserida é invalida!\n");
+            printf("Opção inserida é inválida!\n\n");
+            escolhaOpcao(jogador, estado);  
     }
 }
 
@@ -105,9 +106,9 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado){
     int escolha;
     int indicePeca;
 
-    printf("Peças disponíveis para a jogada:\n");
+    printf("Pecas disponiveis para a jogada:\n");
     printaTurno(jogador, estado); // Chamada da função criada anteriormente para exibir dados na tela.
-    printf("Escolha a peça a ser jogada: (0-%d)", jogador->qntPecas - 1); // indice varia de 0 - numero de pecas
+    printf("Escolha a peca a ser jogada: (0-%d)\n", jogador->qntPecas - 1); // indice varia de 0 - numero de pecas
     scanf("%d", &indicePeca);
 
     if(indicePeca < 0 || indicePeca >= jogador->qntPecas){
@@ -144,34 +145,41 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado){
     estado->ultimaJogada = jogador->ultimaJogada;
     estado->ladoPeca = jogador->ladoPeca;
     estado->pecasDisponiveis--;
+
+    // Alternar para o próximo jogador
+    passarVez(jogador, estado);
 }
 
 // Comprar peça disponível do tabuleiro
-void comprarPeca(Jogador *jogador, EstadoJogo *estado){
-    if(estado->pecasDisponiveis > 0){
+void comprarPeca(Jogador *jogador, EstadoJogo *estado) {
+    if (estado->pecasDisponiveis > 0) {
         jogador->maoJogador[jogador->qntPecas++] = estado->pecasMesa[estado->pecasDisponiveis - 1];
 
         estado->pecasDisponiveis--;
-        jogador->pecasCompradas;
+        jogador->pecasCompradas++;
 
         printf("%s comprou uma nova peca!\n", jogador->nomeJogador);
+
+        // Alternar para o próximo jogador
+        passarVez(jogador, estado);
     } else {
-        printf("Nao ha pecas disponiveis para compra!");
+        printf("Nao ha pecas disponiveis para compra!\n");
     }
 }
 
 // Passar a vez da jogada
-void passarVez(Jogador *jogador, EstadoJogo *estado){
+void passarVez(Jogador *jogador, EstadoJogo *estado) {
     estado->jogadorDaVez = (estado->jogadorDaVez + 1) % estado->totalJogadores;
     jogador->qntPassadasVez++;
 
-    printf("%s passou a vez!", jogador->nomeJogador);
+    printf("%s passou a vez!\n", jogador->nomeJogador);
 }
 
+// Função que salva o estado jogo em um arquivo bin
 void salvarJogo(EstadoJogo *estado, char *nomeArquivo){
-    FILE *file = fopen(nomeArquivo, "w"); // txt ou binario
+    FILE *file = fopen(nomeArquivo, "wb"); // txt ou binario
 
-    if(file = NULL){
+    if(file == NULL){
         printf("O arquivo nao foi encontrado com sucesso.\n");
         return;
     }
@@ -181,10 +189,11 @@ void salvarJogo(EstadoJogo *estado, char *nomeArquivo){
     fclose(file);
 }
 
+// Função que carrega o estado jogo de um arquivo bin
 void carregarJogo(EstadoJogo *estado, char *nomeArquivo){
-    FILE *file = fopen(nomeArquivo, "r"); // txt ou binario
+    FILE *file = fopen(nomeArquivo, "rb"); // txt ou binario
 
-    if(file = NULL){
+    if(file == NULL){
         printf("Erro ao encontrar o arquivo inserido.\n");
         return;
     }
@@ -194,3 +203,49 @@ void carregarJogo(EstadoJogo *estado, char *nomeArquivo){
     fclose(file);
 }
 
+void iniciarJogo() {
+    // A partir daqui ocorre a inicialização do jogo com a declaração de variáveis essenciais 
+    Peca pecas[MAX_PECAS];
+    Jogador jogadores[2];
+    // Funções base inicializadas no teste.h
+    identificaJogadores(jogadores, 2);
+    criacaoPecas(pecas);
+    embaralharPecas(pecas);
+    distribuicaoPecas(pecas, jogadores, 2, NUM_PECAS);
+
+    // Após a distribuição inicial de peças
+    printf("Pecas do Jogador 1: ");
+    for (int i = 0; i < NUM_PECAS; i++) {
+        printf("[%d|%d] ", jogadores[0].maoJogador[i].ladoEsquerdo, jogadores[0].maoJogador[i].ladoDireito);
+    }
+    printf("\nPecas do Jogador 2: ");
+    for (int i = 0; i < NUM_PECAS; i++) {
+        printf("[%d|%d] ", jogadores[1].maoJogador[i].ladoEsquerdo, jogadores[1].maoJogador[i].ladoDireito);
+    }
+
+    // Structs estado do jogo com variáveis importantes para o jogo
+    EstadoJogo estado;
+    estado.qntPecasMesa = 0;
+    estado.pecasDisponiveis = MAX_PECAS - (2 * NUM_PECAS); // 28 peças - as 14 dos 2 jogadores
+    estado.jogadorDaVez = 0;
+    estado.totalJogadores = 2;
+
+    while (condicaoFimJogo(jogadores, &estado) == false) {
+        printf("Turno do jogador: %s\n", jogadores[estado.jogadorDaVez].nomeJogador);
+        printaTurno(&jogadores[estado.jogadorDaVez], &estado);
+
+        escolhaOpcao(&jogadores[estado.jogadorDaVez], &estado);
+    }
+}
+
+// Identificar se a partida terminou e qual jogador continua.
+bool condicaoFimJogo(Jogador *jogadores, EstadoJogo *estado) {
+    for (int i = 0; i < estado->totalJogadores; i++) {
+        printf("\nJogador %s - Pecas: %d\n", jogadores[i].nomeJogador, jogadores[i].qntPecas);
+        if (jogadores[i].qntPecas <= 0) {
+            printf("O jogador %s venceu o jogo!\n", jogadores[i].nomeJogador);
+            return true;
+        }
+    }
+    return false;
+}

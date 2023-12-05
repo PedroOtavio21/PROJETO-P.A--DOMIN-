@@ -1,7 +1,6 @@
 #ifndef TESTE_H
 #define TESTE_H
 
-
 #define MAX_PECAS 28
 #define NUM_PECAS 7
 // Arquivo contendo dados base para serem utilizados ao decorrer do código

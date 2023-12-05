@@ -1,14 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 #include "domino.h"
 
 // --------Função para identificar os dois jogadores da partida.---------
-void identificaJogadores(Jogador jogadores[], int numJogadores){
-    printf("Olá! Insira o nome dos jogadores participantes.\n");
-    for(int i = 0; i < numJogadores; i++){
+
+void identificaJogadores(Jogador jogadores[], int numJogadores) {
+    printf("Ola! Insira o nome dos jogadores participantes.\n");
+
+    for (int i = 0; i < numJogadores; i++) {
         printf("Jogador %d: ", i + 1);
-        scanf("%s", jogadores[i].nomeJogador);
+        scanf("%99s", jogadores[i].nomeJogador);
     }
 }
 
@@ -37,8 +40,19 @@ void embaralharPecas(Peca pecas[]){
 }
 
 // -------------Distribuição das peças entre os jogadores.----------------
-void distribuicaoPecas(Peca pecas[], Jogador *jogador, int numPecas){
-    for(int i = 0; i < numPecas; i++){
-        jogador->maoJogador[i] = pecas[i];
+void distribuicaoPecas(Peca pecas[], Jogador jogadores[], int numJogadores, int numPecas) {
+    for (int i = 0; i < numJogadores; i++) {
+        for (int j = 0; j < numPecas; j++) {
+            jogadores[i].maoJogador[j] = pecas[i * numPecas + j];
+        }
+        jogadores[i].qntPecas = numPecas; // Atualiza a quantidade de peças para o jogador
     }
+
+    // Ajuste para garantir que o adversário comece com 7 peças
+    int adversario = (numJogadores + 1) % numJogadores;
+    for (int i = numPecas; i < 2 * numPecas; i++) {
+        jogadores[adversario].maoJogador[i - numPecas] = pecas[i];
+    }
+    jogadores[adversario].qntPecas = numPecas;
 }
+

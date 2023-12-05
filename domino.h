@@ -32,7 +32,7 @@ typedef struct{
 // Inicialização do jogo
 void identificaJogadores(Jogador jogadores[], int numJogadores);
 void criacaoPecas(Peca pecas[]);
-void distribuicaoPecas(Peca pecas[], Jogador *jogador, int numPecas);
+void distribuicaoPecas(Peca pecas[], Jogador jogadores[], int numJogadores, int numPecas);
 
 
 #endif
