@@ -26,7 +26,7 @@ int main(){
         switch(opcaoMenujogo){
             case 1:
                 printf("Inicializando jogo...\n");
-                // iniciarJogo();
+                iniciarJogo();
                 break;
             case 2:
                 printf("Carregando jogo...\n");
