@@ -5,11 +5,11 @@
 #include "domino.h"
 #include "jogo.h"
 
-int menujogo(){
+int menuJogo(){
     int opcaoMenu;
     
     printf("MENU - GAME\n");
-    printf("Insira uma das 3 opções abaixo:\n");
+    printf("Insira uma das 3 opcoes abaixo:\n");
     printf("1. Iniciar\n2. Carregar Jogo\n3. Sair");
     scanf("%d", &opcaoMenu);
 

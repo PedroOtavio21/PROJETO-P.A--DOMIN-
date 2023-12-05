@@ -18,7 +18,7 @@ Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2) {
         if(jogador1->maoJogador[i].ladoEsquerdo == jogador1->maoJogador[i].ladoDireito){
             maiorDupla1 = i;
         }
-        if(jogador2->maoJogador->ladoEsquerdo == jogador2->maoJogador->ladoDireito){
+        if(jogador2->maoJogador[i].ladoEsquerdo == jogador2->maoJogador[i].ladoDireito){
             maiorDupla2 = i;
         }
     }
