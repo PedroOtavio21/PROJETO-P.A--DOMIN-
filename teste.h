@@ -3,6 +3,8 @@
 
 #define MAX_PECAS 28
 #define NUM_PECAS 7
+#define NOME_ARQUIVO "..//jogo.bin"
+
 // Arquivo contendo dados base para serem utilizados ao decorrer do código
 typedef struct{
     int ladoEsquerdo;
@@ -46,11 +48,11 @@ void comprarPeca(Jogador *jogador, EstadoJogo *estado);
 void passarVez(Jogador *jogador, EstadoJogo *estado);
 
 // Ponto final do jogo
-void salvarJogo(EstadoJogo *estado, char *nomeArquivo);
-void carregarJogo(EstadoJogo *estado, char *nomeArquivo);
+void salvarJogo(EstadoJogo *estado, const char *nomeArquivo);
+void carregarJogo(EstadoJogo *estado, const char *nomeArquivo);
 int menuJogo();
 void iniciarJogo();
-bool condicaoFimJogo();
+bool condicaoFimJogo(Jogador *jogadores, EstadoJogo *estado);
 
 
 #endif

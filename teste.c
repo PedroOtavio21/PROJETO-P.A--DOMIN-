@@ -65,7 +65,7 @@ void distribuicaoPecas(Peca pecas[], Jogador jogadores[], int numJogadores, int 
 */  
 
 // Função para determinar o jogador Inicial
-Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2) {
+Jogador *jogadorInicial(Jogador *jogador1, Jogador *jogador2) {
     // inicialização de variaveis
     int maiorDupla1 = -1, maiorDupla2 = -1; 
     int soma1 = 0, soma2 = 0;
@@ -142,22 +142,31 @@ void printaTurno(Jogador *jogador, EstadoJogo *estado) {
 void escolhaOpcao(Jogador *jogador, EstadoJogo *estado) {
     int opcao;
     printf("Opcoes disponiveis:\n");
-    printf("1. Jogar Peca\n2. Comprar Peca\n3. Passar Vez\n");  
+    printf("1. Jogar Peca\n2. Comprar Peca\n3. Passar Vez\n4. Salvar Jogo e Sair");  // 4. Salvar jogo\n5. Sair
     printf("Escolha uma das opcoes acima.\n");
     scanf("%d", &opcao);
 
     switch (opcao) {
         case 1:
+            printf("Voce escolheu jogar a peca!\n");
             jogarPeca(jogador, estado);
             break;
         case 2:
+            printf("Voce escolheu comprar uma peca!\n");
             comprarPeca(jogador, estado);
             break;
         case 3:
+            printf("Voce escolheu passar a vez!\n");
             passarVez(jogador, estado);
             break;
+        case 4:
+            printf("Voce escolheu salvar a partida!\n"); 
+            salvarJogo(estado, NOME_ARQUIVO);
+            printf("Saindo do jogo para o menu...\n");
+            menuJogo();
+            break;
         default:
-            printf("Opção inserida é inválida!\n\n");
+            printf("Opcao inserida eh invalida!\n\n");
             escolhaOpcao(jogador, estado);  
     }
 }
@@ -237,29 +246,31 @@ void passarVez(Jogador *jogador, EstadoJogo *estado) {
 }
 
 // Função que salva o estado jogo em um arquivo bin
-void salvarJogo(EstadoJogo *estado, char *nomeArquivo){
-    FILE *file = fopen(nomeArquivo, "wb"); // txt ou binario
+void salvarJogo(EstadoJogo *estado, const char *nomeArquivo){
+    FILE *file = fopen(nomeArquivo, "wb");
 
-    if(file == NULL){
-        printf("O arquivo nao foi encontrado com sucesso.\n");
+    if (file == NULL) {
+        perror("Erro ao abrir o arquivo para escrita");
         return;
     }
 
-    fwrite(estado, sizeof(EstadoJogo), 1, file);
+    if (fwrite(estado, sizeof(EstadoJogo), 1, file) != 1) {
+        perror("Erro ao escrever no arquivo");
+    }
 
     fclose(file);
 }
+void carregarJogo(EstadoJogo *estado, const char *nomeArquivo){
+    FILE *file = fopen(nomeArquivo, "rb");
 
-// Função que carrega o estado jogo de um arquivo bin
-void carregarJogo(EstadoJogo *estado, char *nomeArquivo){
-    FILE *file = fopen(nomeArquivo, "rb"); // txt ou binario
-
-    if(file == NULL){
-        printf("Erro ao encontrar o arquivo inserido.\n");
+    if (file == NULL) {
+        perror("Erro ao abrir o arquivo para leitura");
         return;
     }
 
-    fread(estado, sizeof(EstadoJogo), 1, file);
+    if (fread(estado, sizeof(EstadoJogo), 1, file) != 1) {
+        perror("Erro ao ler do arquivo");
+    }
 
     fclose(file);
 }
@@ -273,6 +284,8 @@ void iniciarJogo() {
     criacaoPecas(pecas);
     embaralharPecas(pecas);
     distribuicaoPecas(pecas, jogadores, 2, NUM_PECAS);
+
+    // *jogadorInicial(&jogadores[0], &jogadores[1]);
 
     // Após a distribuição inicial de peças
     printf("Pecas do Jogador 1: ");
@@ -313,18 +326,25 @@ bool condicaoFimJogo(Jogador *jogadores, EstadoJogo *estado) {
 
 int menuJogo(){
     int opcaoMenu;
-    
+    do{
     printf("MENU - GAME\n");
     printf("Insira uma das 3 opcoes abaixo:\n");
     printf("1. Iniciar\n2. Carregar Jogo\n3. Sair\n");
     scanf("%d", &opcaoMenu);
 
+    if (opcaoMenu < 1 || opcaoMenu > 3) {
+            printf("Opcao inserida eh invalida!!!\n");
+    }
+    
+    } while (opcaoMenu < 1 || opcaoMenu > 3);
+    
     return opcaoMenu;
 }
 
 int main() {
+    srand(time(NULL));
     int opcaoMenuJogo;
-
+    EstadoJogo estado;
     printf("--DOMINO`S GAME--\n\n");
 
     do {
@@ -337,7 +357,7 @@ int main() {
             break;
         case 2:
             printf("Carregando jogo...\n");
-            // carregarJogo();
+            carregarJogo(&estado, NOME_ARQUIVO);
             break;
         case 3:
             printf("Ok. Saindo do menu...\n");
