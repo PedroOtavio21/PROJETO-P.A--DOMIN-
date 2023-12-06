@@ -120,6 +120,7 @@ Jogador *jogadorInicial(Jogador *jogador1, Jogador *jogador2) {
 
 // Função responsável por printar na tela o jogador da vez e seus status
 void printaTurno(Jogador *jogador, EstadoJogo *estado) {
+    system("cls");
     // Peças disponíveis na mão do jogador
     printf("Mao do %s:\n", jogador->nomeJogador);
     for (int i = 0; i < jogador->qntPecas; i++) {
@@ -138,11 +139,11 @@ void printaTurno(Jogador *jogador, EstadoJogo *estado) {
     printf("Pecas disponiveis para compra: %d\n", estado->pecasDisponiveis);
 }
 
-// Função com as 3 oções de jogadas por jogador
+// Função com as 4 oções de jogadas por jogador
 void escolhaOpcao(Jogador *jogador, EstadoJogo *estado) {
     int opcao;
     printf("Opcoes disponiveis:\n");
-    printf("1. Jogar Peca\n2. Comprar Peca\n3. Passar Vez\n4. Salvar Jogo e Sair");  // 4. Salvar jogo\n5. Sair
+    printf("1. Jogar Peca\n2. Comprar Peca\n3. Passar Vez\n4. Salvar Jogo e Voltar ao menu inicial");
     printf("Escolha uma das opcoes acima.\n");
     scanf("%d", &opcao);
 
@@ -162,9 +163,8 @@ void escolhaOpcao(Jogador *jogador, EstadoJogo *estado) {
         case 4:
             printf("Voce escolheu salvar a partida!\n"); 
             salvarJogo(estado, NOME_ARQUIVO);
-            printf("Saindo do jogo para o menu...\n");
             menuJogo();
-            break;
+            return;
         default:
             printf("Opcao inserida eh invalida!\n\n");
             escolhaOpcao(jogador, estado);  
@@ -172,51 +172,67 @@ void escolhaOpcao(Jogador *jogador, EstadoJogo *estado) {
 }
 
 // Jogar peça escolhida
-void jogarPeca(Jogador *jogador, EstadoJogo *estado){
-    int escolha;
-    int indicePeca;
-
+void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
+    int escolha; // 0 ou 1
+    int indicePeca; 
+    int girar; 
     printf("Pecas disponiveis para a jogada:\n");
-    printaTurno(jogador, estado); // Chamada da função criada anteriormente para exibir dados na tela.
-    printf("Escolha a peca a ser jogada: (0-%d)\n", jogador->qntPecas - 1); // indice varia de 0 - numero de pecas
+    printaTurno(jogador, estado);
+
+    printf("Escolha a peca a ser jogada: (0-%d)\n", jogador->qntPecas - 1);
     scanf("%d", &indicePeca);
 
-    if(indicePeca < 0 || indicePeca >= jogador->qntPecas){
-        printf("Indice inserido foi invalido");
-        return; // Preciso fazer uma manutenção do código para que ele mostre novamente para o usuario
+    if (indicePeca < 0 || indicePeca >= jogador->qntPecas) {
+        printf("Indice inserido foi invalido\n");
+        return;
     }
 
-    printf("Insira o lado no qual queira jogar(0 - esquerda e 1 - direita): ");
+    // Girar ou nao a peça escolhida
+    printf("Deseja girar a peca?(1 - sim e 0 - nao)\n");
+    scanf("%d", &girar);
+    
+    if (girar == 1) {
+        if (jogador->maoJogador[indicePeca].ladoEsquerdo != jogador->maoJogador[indicePeca].ladoDireito) {
+            int temp = jogador->maoJogador[indicePeca].ladoEsquerdo;
+            jogador->maoJogador[indicePeca].ladoEsquerdo = jogador->maoJogador[indicePeca].ladoDireito;
+            jogador->maoJogador[indicePeca].ladoDireito = temp;
+        } 
+    }
+
+
+    printf("Insira o lado no qual quer jogar (0 - esquerda e 1 - direita): ");
     scanf("%d", &escolha);
 
-    if(escolha != 0 && escolha != 1){
-        printf("O lado escolhido foi invalido.");
-        return; // Preciso fazer uma manutenção do código para que ele mostre novamente para o usuario
+    if (escolha != 0 && escolha != 1) {
+        printf("O lado escolhido foi invalido.\n");
+        return;
     }
 
-    // Atualização da struct jogador com a ultima jogada;
-    jogador->ultimaJogada = jogador->maoJogador[indicePeca];
-    jogador->ladoPeca = escolha;
-
-    // Adicionar uma peça em um dos lados da mesa atual;
-    if(escolha == 0){
-        estado->pecasMesa[estado->qntPecasMesa++] = jogador->ultimaJogada;
+    // Adicionar uma peça na posição da mesa
+    if (escolha == 0) {
+        // Peça original passa para o próximo indice
+        for (int i = estado->qntPecasMesa; i > 0; i--) {
+            estado->pecasMesa[i] = estado->pecasMesa[i - 1];
+        }
+        estado->pecasMesa[0] = jogador->maoJogador[indicePeca];
+        estado->qntPecasMesa++;
     } else {
-        estado->pecasMesa[estado->qntPecasMesa] = jogador->ultimaJogada;
+        // Se tornará a ultima peça do vetor mesa
+        estado->pecasMesa[estado->qntPecasMesa] = jogador->maoJogador[indicePeca];
         estado->qntPecasMesa++;
     }
 
-    // Removendo peca da mão do jogador
-    for(int i = indicePeca; i < jogador->qntPecas - 1; i++){
+    // Remover a peça da mão do jogador
+    for (int i = indicePeca; i < jogador->qntPecas - 1; i++) {
         jogador->maoJogador[i] = jogador->maoJogador[i + 1];
     }
     jogador->qntPecas--;
 
-    estado->ultimaJogada = jogador->ultimaJogada;
-    estado->ladoPeca = jogador->ladoPeca;
+    estado->ultimaJogada = jogador->maoJogador[indicePeca];
+    estado->ladoPeca = escolha;
     estado->pecasDisponiveis--;
 
-    // Alternar para o próximo jogador
+    // Passar a vez para o jogador seguinte;
     passarVez(jogador, estado);
 }
 
@@ -338,6 +354,12 @@ int menuJogo(){
     
     } while (opcaoMenu < 1 || opcaoMenu > 3);
     
+    if(opcaoMenu == 3){
+        printf("Voce escolheu sair do jogo.");
+        printf("Adeus amigo...");
+        exit(0);
+    }
+
     return opcaoMenu;
 }
 
