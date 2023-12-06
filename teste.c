@@ -18,19 +18,28 @@ void identificaJogadores(Jogador jogadores[], int numJogadores) {
 
 // --------------------Função para criação das 28 peças-----------------------
 void criacaoPecas(Peca pecas[]){
-    int k = 0;
+    int contador = 0;
     for(int i = 0; i <= 6; i++){
         for(int j = i; j <= 6; j++){
-            pecas[k].ladoEsquerdo = i;
-            pecas[k].ladoDireito = j;
-            k++;
+            pecas[contador].ladoEsquerdo = i;
+            pecas[contador].ladoDireito = j;
+            contador++;
         }
     }
 }
 
 // --------Função responsável por embaralhar as peças automaticamente---------
 void embaralharPecas(Peca pecas[]){
+    srand(time(NULL));
     int i, j;
+
+    // Antes do embaralhamento para testar algum bug
+    printf("Antes do embaralhamento:\n");
+    for (int k = 0; k < MAX_PECAS; k++) {
+        printf("[%d|%d] ", pecas[k].ladoEsquerdo, pecas[k].ladoDireito);
+    }
+    printf("\n");
+
     for(i = 0; i < MAX_PECAS; i++){
         j = rand() % MAX_PECAS;
 
@@ -38,6 +47,13 @@ void embaralharPecas(Peca pecas[]){
         pecas[i] = pecas[j];
         pecas[j] = temp;
     }
+
+    // Apos o embaralhamento
+    printf("Após o embaralhamento:\n");
+    for (int k = 0; k < MAX_PECAS; k++) {
+        printf("[%d|%d] ", pecas[k].ladoEsquerdo, pecas[k].ladoDireito);
+    }
+    printf("\n");
 }
 
 // -------------Distribuição das peças entre os jogadores.----------------
@@ -133,7 +149,8 @@ int jogadorInicial(Jogador jogadores[], int numJogadores) {
 
 // Função responsável por printar na tela o jogador da vez e seus status
 void printaTurno(Jogador *jogador, EstadoJogo *estado) {
-    system("cls");
+    // system("cls");
+    
     // Peças disponíveis na mão do jogador
     printf("Mao do %s:\n", jogador->nomeJogador);
     for (int i = 0; i < jogador->qntPecas; i++) {
@@ -148,7 +165,7 @@ void printaTurno(Jogador *jogador, EstadoJogo *estado) {
 
     // Informações adicionais
     printf("\n\nInformacoes adicionais:\n");
-    printf("Pecas disponiveis na mao do adversario: %d\n", MAX_PECAS - 3 * jogador->qntPecas);
+    printf("Pecas disponiveis na mao do adversario: %d\n", jogador->qntPecas);
     printf("Pecas disponiveis para compra: %d\n\n", estado->pecasDisponiveis);
 }
 
@@ -203,9 +220,9 @@ int podeJogarPeca(Peca peca, EstadoJogo estado) {
 
 // Jogar peça escolhida
 void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
-    int escolha; // 0 ou 1
-    int indicePeca; 
-    int girar; 
+    int indicePeca;
+    int girar;
+    int escolha; 
 
     printf("Pecas disponiveis para a jogada:\n");
     printaTurno(jogador, estado);
@@ -220,10 +237,11 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
 
     // Girar ou nao a peca escolhida
     if (jogador->maoJogador[indicePeca].ladoEsquerdo != jogador->maoJogador[indicePeca].ladoDireito) {
-        printf("Deseja girar a peca?(1 - sim e 0 - nao)\n");
+        printf("Deseja girar a peca? (1 - sim e 0 - nao)\n");
         scanf("%d", &girar);
 
         if (girar == 1) {
+            // Troca dos lados da peça
             int temp = jogador->maoJogador[indicePeca].ladoEsquerdo;
             jogador->maoJogador[indicePeca].ladoEsquerdo = jogador->maoJogador[indicePeca].ladoDireito;
             jogador->maoJogador[indicePeca].ladoDireito = temp;
@@ -233,7 +251,6 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
     // Verifica se a peça pode ser jogada na mesa atual
     if (!podeJogarPeca(jogador->maoJogador[indicePeca], *estado)) {
         printf("Peça inserida não pode ser utilizada na mesa.\n");
-        jogarPeca(jogador, estado);
         return;
     }
 
@@ -245,16 +262,16 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
         return;
     }
 
-    // Adicionar uma peça na posição da mesa
+    // Adicionar a peça na posição da mesa
     if (escolha == 0) {
-        // Peça original passa para o próximo indice
+        // Movendo as peças para abrir espaço para a nova peça
         for (int i = estado->qntPecasMesa; i > 0; i--) {
             estado->pecasMesa[i] = estado->pecasMesa[i - 1];
         }
         estado->pecasMesa[0] = jogador->maoJogador[indicePeca];
         estado->qntPecasMesa++;
     } else {
-        // Se tornará a ultima peça do vetor mesa
+        // Adicionando a peça no final do vetor mesa
         estado->pecasMesa[estado->qntPecasMesa] = jogador->maoJogador[indicePeca];
         estado->qntPecasMesa++;
     }
@@ -263,8 +280,9 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
     for (int i = indicePeca; i < jogador->qntPecas - 1; i++) {
         jogador->maoJogador[i] = jogador->maoJogador[i + 1];
     }
-    jogador->qntPecas--;
 
+    // Atualização de dados do jogo
+    jogador->qntPecas--;
     estado->ultimaJogada = jogador->maoJogador[indicePeca];
     estado->ladoPeca = escolha;
     estado->pecasDisponiveis--;
@@ -273,15 +291,24 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
     passarVez(jogador, estado);
 }
 
+
 // Comprar peça disponível do tabuleiro
 void comprarPeca(Jogador *jogador, EstadoJogo *estado) {
     if (estado->pecasDisponiveis > 0) {
-        jogador->maoJogador[jogador->qntPecas++] = estado->pecasMesa[estado->pecasDisponiveis - 1];
+        jogador->maoJogador[jogador->qntPecas] = estado->pecasMesa[estado->pecasDisponiveis - 1];
 
         estado->pecasDisponiveis--;
         jogador->pecasCompradas++;
+        jogador->qntPecas++;
 
         printf("%s comprou uma nova peca!\n", jogador->nomeJogador);
+
+    // Imprimir a mão do jogador após a compra (debug)
+        printf("Mao do %s apos a compra:\n", jogador->nomeJogador);
+        for (int i = 0; i < jogador->qntPecas; i++) {
+            printf("[%d|%d] ", jogador->maoJogador[i].ladoEsquerdo, jogador->maoJogador[i].ladoDireito);
+        }
+        printf("\n");
 
         // Alternar para o próximo jogador
         passarVez(jogador, estado);
@@ -308,7 +335,7 @@ void salvarJogo(EstadoJogo *estado, const char *nomeArquivo){
     }
 
     if (fwrite(estado, sizeof(EstadoJogo), 1, file) != 1) {
-        perror("Erro ao escrever no arquivo");
+        perror("Erro ao escrever no arquivo"); // printf em formato de erro
     }
 
     fclose(file);
@@ -324,7 +351,7 @@ void carregarJogo(EstadoJogo *estado, const char *nomeArquivo){
     }
 
     if (fread(estado, sizeof(EstadoJogo), 1, file) != 1) {
-        perror("Erro ao ler do arquivo");
+        perror("Erro ao ler do arquivo"); // printf em formato de erro
     }
 
     fclose(file);
@@ -362,12 +389,7 @@ void iniciarJogo() {
     estado.ultimaJogada.ladoEsquerdo = -1;
     estado.ultimaJogada.ladoDireito = -1;
     
-    /* 
-    Primeira peça jogada automaticamente na mesa:
-    int jogadorPrimeiroTurno = estado.jogadorDaVez;
-    printf("\nO jogador tera a primeira peca jogada na mesa\n");
-    jogarPeca(&jogadores[jogadorPrimeiroTurno], &estado);
-    */
+    
 
     while (condicaoFimJogo(jogadores, &estado) == false) {
         printf("\n\nTurno do jogador: %s\n", jogadores[estado.jogadorDaVez].nomeJogador);
@@ -375,6 +397,8 @@ void iniciarJogo() {
 
         escolhaOpcao(&jogadores[estado.jogadorDaVez], &estado);
     }
+
+    salvarJogo(&estado, NOME_ARQUIVO);
 }
 
 // Identificar se a partida terminou e qual jogador continua.
@@ -384,7 +408,6 @@ bool condicaoFimJogo(Jogador *jogadores, EstadoJogo *estado) {
         if (jogadores[i].qntPecas <= 0) {
             printf("O jogador %s venceu o jogo!\n", jogadores[i].nomeJogador);
             return true;
-            exit(0);
         }
     }
     return false;
@@ -414,7 +437,6 @@ int menuJogo(){
 }
 
 int main() {
-    srand(time(NULL));
     int opcaoMenuJogo;
     EstadoJogo estado;
     printf("--DOMINO`S GAME--\n\n");

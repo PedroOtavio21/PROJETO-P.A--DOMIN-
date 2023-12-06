@@ -18,7 +18,7 @@ typedef struct{
     Peca ultimaJogada;
     int ladoPeca; // lado no qual a peça sera jogada (esquerda ou direita)
     int pecasCompradas;
-    int qntPassadasVez; // Quantidade de vezes passadas por jogador
+    int qntPassadasVez; // quantidade de vezes passadas por jogador
 } Jogador;
 
 typedef struct{
@@ -29,12 +29,13 @@ typedef struct{
     int ladoPeca; // 0 para esquerda e 1 para direita
     int jogadorDaVez;
     int totalJogadores;
-    int ambosPassaramVez;
+    // int ambosPassaramVez;
 } EstadoJogo;
 
 // Inicialização do jogo
 void identificaJogadores(Jogador jogadores[], int numJogadores);
 void criacaoPecas(Peca pecas[]);
+void embaralharPecas(Peca pecas[]);
 void distribuicaoPecas(Peca pecas[], Jogador jogadores[], int numJogadores, int numPecas);
 
 
