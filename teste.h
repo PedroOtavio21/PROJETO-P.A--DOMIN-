@@ -38,7 +38,7 @@ void distribuicaoPecas(Peca pecas[], Jogador jogadores[], int numJogadores, int 
 
 
 // Turnos de jogadores
-Jogador* jogadorInicial(Jogador *jogador1, Jogador *jogador2);
+int jogadorInicial(Jogador jogadores[], int numJogadores) ;
 void printaTurno(Jogador *jogador, EstadoJogo *estado);
 void escolhaOpcao(Jogador *jogador, EstadoJogo *estado);
 

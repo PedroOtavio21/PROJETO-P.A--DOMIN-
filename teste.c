@@ -65,55 +65,56 @@ void distribuicaoPecas(Peca pecas[], Jogador jogadores[], int numJogadores, int 
 */  
 
 // Função para determinar o jogador Inicial
-Jogador *jogadorInicial(Jogador *jogador1, Jogador *jogador2) {
-    // inicialização de variaveis
+int jogadorInicial(Jogador jogadores[], int numJogadores) {
+    // Inicialização de variáveis
     int maiorDupla1 = -1, maiorDupla2 = -1; 
     int soma1 = 0, soma2 = 0;
 
-    for(int i = 0; i < jogador1->qntPecas; i++){
-        // identificar a soma das peças de cada jogador
-        soma1 += jogador1->maoJogador[i].ladoEsquerdo + jogador1->maoJogador[i].ladoDireito;
-        soma2 += jogador2->maoJogador[i].ladoEsquerdo + jogador2->maoJogador[i].ladoDireito;
-        // identificar se os jogadores possuem duplas / carrossel
-        if(jogador1->maoJogador[i].ladoEsquerdo == jogador1->maoJogador[i].ladoDireito){
+    for (int i = 0; i < jogadores[numJogadores].qntPecas; i++) {
+        // Identificar a soma das peças de cada jogador
+        soma1 += jogadores[0].maoJogador[i].ladoEsquerdo + jogadores[0].maoJogador[i].ladoDireito;
+        soma2 += jogadores[1].maoJogador[i].ladoEsquerdo + jogadores[1].maoJogador[i].ladoDireito;
+
+        // Identificar se os jogadores possuem duplas/carrossel
+        if (jogadores[0].maoJogador[i].ladoEsquerdo == jogadores[0].maoJogador[i].ladoDireito) {
             maiorDupla1 = i;
         }
-        if(jogador2->maoJogador[i].ladoEsquerdo == jogador2->maoJogador[i].ladoDireito){
+        if (jogadores[1].maoJogador[i].ladoEsquerdo == jogadores[1].maoJogador[i].ladoDireito) {
             maiorDupla2 = i;
         }
     }
 
     // Caso não tenha dupla, as duplas continuarão com -1.
-    if(maiorDupla1 != -1 && maiorDupla2 != -1){
-        if(jogador1->maoJogador[maiorDupla1].ladoEsquerdo > jogador2->maoJogador[maiorDupla2].ladoEsquerdo){
-            return jogador1;
-        } else if(jogador2->maoJogador[maiorDupla2].ladoEsquerdo > jogador1->maoJogador[maiorDupla1].ladoEsquerdo){
-            return jogador2;
+    if (maiorDupla1 != -1 && maiorDupla2 != -1) {
+        if (jogadores[0].maoJogador[maiorDupla1].ladoEsquerdo > jogadores[1].maoJogador[maiorDupla2].ladoEsquerdo) {
+            return 0; // Índice do jogador1
+        } else if (jogadores[1].maoJogador[maiorDupla2].ladoEsquerdo > jogadores[0].maoJogador[maiorDupla1].ladoEsquerdo) {
+            return 1; // Índice do jogador2
         }
     }
 
-    if(soma1 > soma2){
-        return jogador1;
-    } else if (soma2 > soma1){
-        return jogador2;
+    if (soma1 > soma2) {
+        return 0; // Índice do jogador1
+    } else if (soma2 > soma1) {
+        return 1; // Índice do jogador2
     } else {
-        // identificar o maior numero presente nas peças entre os jogadores
-        int maiorNum1 = jogador1->maoJogador[0].ladoEsquerdo + jogador1->maoJogador[0].ladoDireito;
-        int maiorNum2 = jogador2->maoJogador[0].ladoEsquerdo + jogador2->maoJogador[0].ladoDireito;
+        // Identificar o maior número presente nas peças entre os jogadores
+        int maiorNum1 = jogadores[0].maoJogador[0].ladoEsquerdo + jogadores[0].maoJogador[0].ladoDireito;
+        int maiorNum2 = jogadores[1].maoJogador[0].ladoEsquerdo + jogadores[1].maoJogador[0].ladoDireito;
 
-        for(int i = 1; i < jogador1->qntPecas; i++){
-            if(jogador1->maoJogador[i].ladoEsquerdo + jogador1->maoJogador[i].ladoDireito > maiorNum1){
-                maiorNum1 = jogador1->maoJogador[i].ladoEsquerdo + jogador1->maoJogador[i].ladoDireito;
+        for (int i = 1; i < jogadores[numJogadores].qntPecas; i++) {
+            if (jogadores[0].maoJogador[i].ladoEsquerdo + jogadores[0].maoJogador[i].ladoDireito > maiorNum1) {
+                maiorNum1 = jogadores[0].maoJogador[i].ladoEsquerdo + jogadores[0].maoJogador[i].ladoDireito;
             }
-            if(jogador2->maoJogador[i].ladoEsquerdo + jogador2->maoJogador[i].ladoDireito > maiorNum2){
-                maiorNum2 = jogador2->maoJogador[i].ladoEsquerdo + jogador2->maoJogador[i].ladoDireito;
+            if (jogadores[1].maoJogador[i].ladoEsquerdo + jogadores[1].maoJogador[i].ladoDireito > maiorNum2) {
+                maiorNum2 = jogadores[1].maoJogador[i].ladoEsquerdo + jogadores[1].maoJogador[i].ladoDireito;
             }
         }
 
-        if(maiorNum1 > maiorNum2){
-            return jogador1;
+        if (maiorNum1 > maiorNum2) {
+            return 0; // Índice do jogador1
         } else {
-            return jogador2;
+            return 1; // Índice do jogador2
         }
     }
 }
@@ -124,7 +125,7 @@ void printaTurno(Jogador *jogador, EstadoJogo *estado) {
     // Peças disponíveis na mão do jogador
     printf("Mao do %s:\n", jogador->nomeJogador);
     for (int i = 0; i < jogador->qntPecas; i++) {
-        printf("[%d|%d] ", jogador->maoJogador[i].ladoEsquerdo, jogador->maoJogador[i].ladoDireito);
+        printf("[%d|%d] - %d\n", jogador->maoJogador[i].ladoEsquerdo, jogador->maoJogador[i].ladoDireito, i);
     }
 
     // Peças disponíveis na mesa
@@ -301,7 +302,7 @@ void iniciarJogo() {
     embaralharPecas(pecas);
     distribuicaoPecas(pecas, jogadores, 2, NUM_PECAS);
 
-    // *jogadorInicial(&jogadores[0], &jogadores[1]);
+    int indiceJogadorInicial = jogadorInicial(jogadores, 2);
 
     // Após a distribuição inicial de peças
     printf("Pecas do Jogador 1: ");
@@ -317,11 +318,21 @@ void iniciarJogo() {
     EstadoJogo estado;
     estado.qntPecasMesa = 0;
     estado.pecasDisponiveis = MAX_PECAS - (2 * NUM_PECAS); // 28 peças - as 14 dos 2 jogadores
-    estado.jogadorDaVez = 0;
+    estado.jogadorDaVez = indiceJogadorInicial;
     estado.totalJogadores = 2;
 
+    estado.ultimaJogada.ladoEsquerdo = -1;
+    estado.ultimaJogada.ladoDireito = -1;
+    
+    /* 
+    Primeira peça jogada automaticamente na mesa:
+    int jogadorPrimeiroTurno = estado.jogadorDaVez;
+    printf("\nO jogador tera a primeira peca jogada na mesa\n");
+    jogarPeca(&jogadores[jogadorPrimeiroTurno], &estado);
+    */
+
     while (condicaoFimJogo(jogadores, &estado) == false) {
-        printf("Turno do jogador: %s\n", jogadores[estado.jogadorDaVez].nomeJogador);
+        printf("\n\nTurno do jogador: %s\n", jogadores[estado.jogadorDaVez].nomeJogador);
         printaTurno(&jogadores[estado.jogadorDaVez], &estado);
 
         escolhaOpcao(&jogadores[estado.jogadorDaVez], &estado);
@@ -331,7 +342,7 @@ void iniciarJogo() {
 // Identificar se a partida terminou e qual jogador continua.
 bool condicaoFimJogo(Jogador *jogadores, EstadoJogo *estado) {
     for (int i = 0; i < estado->totalJogadores; i++) {
-        printf("\nJogador %s - Pecas: %d\n", jogadores[i].nomeJogador, jogadores[i].qntPecas);
+        printf("\nJogador %s - Pecas: %d", jogadores[i].nomeJogador, jogadores[i].qntPecas);
         if (jogadores[i].qntPecas <= 0) {
             printf("O jogador %s venceu o jogo!\n", jogadores[i].nomeJogador);
             return true;
@@ -355,8 +366,8 @@ int menuJogo(){
     } while (opcaoMenu < 1 || opcaoMenu > 3);
     
     if(opcaoMenu == 3){
-        printf("Voce escolheu sair do jogo.");
-        printf("Adeus amigo...");
+        printf("Voce escolheu sair do jogo.\n\n");
+        printf("Encerrando...");
         exit(0);
     }
 
