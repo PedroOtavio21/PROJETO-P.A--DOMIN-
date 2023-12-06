@@ -125,7 +125,7 @@ void printaTurno(Jogador *jogador, EstadoJogo *estado) {
     // Peças disponíveis na mão do jogador
     printf("Mao do %s:\n", jogador->nomeJogador);
     for (int i = 0; i < jogador->qntPecas; i++) {
-        printf("[%d|%d] - %d\n", jogador->maoJogador[i].ladoEsquerdo, jogador->maoJogador[i].ladoDireito, i);
+        printf("[%d|%d] - %d\n", jogador->maoJogador[i].ladoEsquerdo, jogador->maoJogador[i].ladoDireito, i + 1);
     }
 
     // Peças disponíveis na mesa
@@ -136,8 +136,8 @@ void printaTurno(Jogador *jogador, EstadoJogo *estado) {
 
     // Informações adicionais
     printf("\n\nInformacoes adicionais:\n");
-    printf("Pecas disponiveis na mao do adversario: %d\n", 28 - (jogador->qntPecas + estado->qntPecasMesa));
-    printf("Pecas disponiveis para compra: %d\n", estado->pecasDisponiveis);
+    printf("Pecas disponiveis na mao do adversario: %d\n", MAX_PECAS - 3 * jogador->qntPecas);
+    printf("Pecas disponiveis para compra: %d\n\n", estado->pecasDisponiveis);
 }
 
 // Função com as 4 oções de jogadas por jogador
@@ -177,10 +177,11 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
     int escolha; // 0 ou 1
     int indicePeca; 
     int girar; 
+
     printf("Pecas disponiveis para a jogada:\n");
     printaTurno(jogador, estado);
 
-    printf("Escolha a peca a ser jogada: (0-%d)\n", jogador->qntPecas - 1);
+    printf("Escolha a peca a ser jogada (1-%d):\n", jogador->qntPecas);
     scanf("%d", &indicePeca);
 
     if (indicePeca < 0 || indicePeca >= jogador->qntPecas) {
@@ -188,18 +189,17 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
         return;
     }
 
-    // Girar ou nao a peça escolhida
-    printf("Deseja girar a peca?(1 - sim e 0 - nao)\n");
-    scanf("%d", &girar);
-    
-    if (girar == 1) {
-        if (jogador->maoJogador[indicePeca].ladoEsquerdo != jogador->maoJogador[indicePeca].ladoDireito) {
+    // Girar ou nao a peca escolhida
+    if (jogador->maoJogador[indicePeca].ladoEsquerdo != jogador->maoJogador[indicePeca].ladoDireito) {
+        printf("Deseja girar a peca?(1 - sim e 0 - nao)\n");
+        scanf("%d", &girar);
+
+        if (girar == 1) {
             int temp = jogador->maoJogador[indicePeca].ladoEsquerdo;
             jogador->maoJogador[indicePeca].ladoEsquerdo = jogador->maoJogador[indicePeca].ladoDireito;
             jogador->maoJogador[indicePeca].ladoDireito = temp;
-        } 
+        }
     }
-
 
     printf("Insira o lado no qual quer jogar (0 - esquerda e 1 - direita): ");
     scanf("%d", &escolha);
@@ -233,7 +233,7 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
     estado->ladoPeca = escolha;
     estado->pecasDisponiveis--;
 
-    // Passar a vez para o jogador seguinte;
+    // Passar a vez para o jogador seguinte
     passarVez(jogador, estado);
 }
 
