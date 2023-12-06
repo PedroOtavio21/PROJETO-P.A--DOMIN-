@@ -29,6 +29,7 @@ typedef struct{
     int ladoPeca; // 0 para esquerda e 1 para direita
     int jogadorDaVez;
     int totalJogadores;
+    int ambosPassaramVez;
 } EstadoJogo;
 
 // Inicialização do jogo

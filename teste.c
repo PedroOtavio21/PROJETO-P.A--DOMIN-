@@ -382,6 +382,7 @@ bool condicaoFimJogo(Jogador *jogadores, EstadoJogo *estado) {
         if (jogadores[i].qntPecas <= 0) {
             printf("O jogador %s venceu o jogo!\n", jogadores[i].nomeJogador);
             return true;
+            exit(0);
         }
     }
     return false;
