@@ -70,15 +70,23 @@ int jogadorInicial(Jogador jogadores[], int numJogadores) {
     int maiorDupla1 = -1, maiorDupla2 = -1; 
     int soma1 = 0, soma2 = 0;
 
-    for (int i = 0; i < jogadores[numJogadores].qntPecas; i++) {
+    // Verificar jogador 1
+    for (int i = 0; i < jogadores[0].qntPecas; i++) {
         // Identificar a soma das peças de cada jogador
         soma1 += jogadores[0].maoJogador[i].ladoEsquerdo + jogadores[0].maoJogador[i].ladoDireito;
-        soma2 += jogadores[1].maoJogador[i].ladoEsquerdo + jogadores[1].maoJogador[i].ladoDireito;
 
-        // Identificar se os jogadores possuem duplas/carrossel
+        // Identificar se o jogador 1 possui duplas/carrossel
         if (jogadores[0].maoJogador[i].ladoEsquerdo == jogadores[0].maoJogador[i].ladoDireito) {
             maiorDupla1 = i;
         }
+    }
+
+    // Verificar jogador 2
+    for (int i = 0; i < jogadores[1].qntPecas; i++) {
+        // Identificar a soma das peças de cada jogador
+        soma2 += jogadores[1].maoJogador[i].ladoEsquerdo + jogadores[1].maoJogador[i].ladoDireito;
+
+        // Identificar se o jogador 2 possui duplas/carrossel
         if (jogadores[1].maoJogador[i].ladoEsquerdo == jogadores[1].maoJogador[i].ladoDireito) {
             maiorDupla2 = i;
         }
@@ -102,10 +110,13 @@ int jogadorInicial(Jogador jogadores[], int numJogadores) {
         int maiorNum1 = jogadores[0].maoJogador[0].ladoEsquerdo + jogadores[0].maoJogador[0].ladoDireito;
         int maiorNum2 = jogadores[1].maoJogador[0].ladoEsquerdo + jogadores[1].maoJogador[0].ladoDireito;
 
-        for (int i = 1; i < jogadores[numJogadores].qntPecas; i++) {
+        for (int i = 1; i < jogadores[0].qntPecas; i++) {
             if (jogadores[0].maoJogador[i].ladoEsquerdo + jogadores[0].maoJogador[i].ladoDireito > maiorNum1) {
                 maiorNum1 = jogadores[0].maoJogador[i].ladoEsquerdo + jogadores[0].maoJogador[i].ladoDireito;
             }
+        }
+
+        for (int i = 1; i < jogadores[1].qntPecas; i++) {
             if (jogadores[1].maoJogador[i].ladoEsquerdo + jogadores[1].maoJogador[i].ladoDireito > maiorNum2) {
                 maiorNum2 = jogadores[1].maoJogador[i].ladoEsquerdo + jogadores[1].maoJogador[i].ladoDireito;
             }
@@ -119,13 +130,14 @@ int jogadorInicial(Jogador jogadores[], int numJogadores) {
     }
 }
 
+
 // Função responsável por printar na tela o jogador da vez e seus status
 void printaTurno(Jogador *jogador, EstadoJogo *estado) {
     system("cls");
     // Peças disponíveis na mão do jogador
     printf("Mao do %s:\n", jogador->nomeJogador);
     for (int i = 0; i < jogador->qntPecas; i++) {
-        printf("[%d|%d] - %d\n", jogador->maoJogador[i].ladoEsquerdo, jogador->maoJogador[i].ladoDireito, i + 1);
+        printf("[%d|%d] - %d\n", jogador->maoJogador[i].ladoEsquerdo, jogador->maoJogador[i].ladoDireito, i);
     }
 
     // Peças disponíveis na mesa
@@ -172,6 +184,23 @@ void escolhaOpcao(Jogador *jogador, EstadoJogo *estado) {
     }
 }
 
+int podeJogarPeca(Peca peca, EstadoJogo estado) {
+    if (estado.qntPecasMesa == 0) {
+        // Se a mesa estiver vazia, qualquer peça pode ser jogada
+        return 1;
+    }
+
+    // Verifica se a peça pode ser jogada em qualquer um dos lados
+    if (peca.ladoEsquerdo == estado.pecasMesa[0].ladoEsquerdo || 
+        peca.ladoEsquerdo == estado.pecasMesa[estado.qntPecasMesa - 1].ladoDireito ||
+        peca.ladoDireito == estado.pecasMesa[0].ladoEsquerdo || 
+        peca.ladoDireito == estado.pecasMesa[estado.qntPecasMesa - 1].ladoDireito) {
+        return 1;
+    }
+
+    return 0; // A peça não pode ser jogada
+}
+
 // Jogar peça escolhida
 void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
     int escolha; // 0 ou 1
@@ -181,7 +210,7 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
     printf("Pecas disponiveis para a jogada:\n");
     printaTurno(jogador, estado);
 
-    printf("Escolha a peca a ser jogada (1-%d):\n", jogador->qntPecas);
+    printf("Escolha a peca a ser jogada (0-%d):\n", jogador->qntPecas - 1);
     scanf("%d", &indicePeca);
 
     if (indicePeca < 0 || indicePeca >= jogador->qntPecas) {
@@ -199,6 +228,13 @@ void jogarPeca(Jogador *jogador, EstadoJogo *estado) {
             jogador->maoJogador[indicePeca].ladoEsquerdo = jogador->maoJogador[indicePeca].ladoDireito;
             jogador->maoJogador[indicePeca].ladoDireito = temp;
         }
+    }
+
+    // Verifica se a peça pode ser jogada na mesa atual
+    if (!podeJogarPeca(jogador->maoJogador[indicePeca], *estado)) {
+        printf("Peça inserida não pode ser utilizada na mesa.\n");
+        jogarPeca(jogador, estado);
+        return;
     }
 
     printf("Insira o lado no qual quer jogar (0 - esquerda e 1 - direita): ");

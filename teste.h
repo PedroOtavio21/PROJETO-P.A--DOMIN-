@@ -43,6 +43,7 @@ void printaTurno(Jogador *jogador, EstadoJogo *estado);
 void escolhaOpcao(Jogador *jogador, EstadoJogo *estado);
 
 // 3 opções de jogada por jogador
+int podeJogarPeca(Peca peca, EstadoJogo estado);
 void jogarPeca(Jogador *jogador, EstadoJogo *estado);
 void comprarPeca(Jogador *jogador, EstadoJogo *estado);
 void passarVez(Jogador *jogador, EstadoJogo *estado);
