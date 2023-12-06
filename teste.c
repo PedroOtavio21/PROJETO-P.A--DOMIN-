@@ -313,6 +313,8 @@ void salvarJogo(EstadoJogo *estado, const char *nomeArquivo){
 
     fclose(file);
 }
+
+// Carregar o jogo salvo anteriormente
 void carregarJogo(EstadoJogo *estado, const char *nomeArquivo){
     FILE *file = fopen(nomeArquivo, "rb");
 

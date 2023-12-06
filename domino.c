@@ -55,4 +55,3 @@ void distribuicaoPecas(Peca pecas[], Jogador jogadores[], int numJogadores, int 
     }
     jogadores[adversario].qntPecas = numPecas;
 }
-

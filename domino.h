@@ -1,8 +1,10 @@
-#ifndef DOMINO_H
-#define DOMINO_H
+#ifndef TESTE_H
+#define TESTE_H
 
 #define MAX_PECAS 28
 #define NUM_PECAS 7
+#define NOME_ARQUIVO "..//jogo.bin"
+
 // Arquivo contendo dados base para serem utilizados ao decorrer do código
 typedef struct{
     int ladoEsquerdo;
